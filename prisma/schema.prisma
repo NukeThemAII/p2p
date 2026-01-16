@@ -7,40 +7,11 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-enum OrderStatus {
-  DRAFT
-  INVOICE_CREATED
-  WAITING_PAYMENT
-  CONFIRMING
-  CONFIRMED
-  FINISHED
-  EXPIRED
-  FAILED
-  REFUNDED
-  FULFILLED
-}
-
-enum PaymentEventSource {
-  NOWPAYMENTS_IPN
-  POLL
-}
-
-enum SessionState {
-  LANG_SELECTED
-  MAIN_MENU
-  BUY_ENTER_AMOUNT
-  BUY_CONFIRM_SUMMARY
-  INVOICE_VIEW
-  ORDER_LIST
-  HELP
-  ADMIN_WAIT_VOUCHER
-}
-
 model UserSession {
   id                    String       @id @default(cuid())
   userTelegramId        String       @unique
   lang                  String
-  state                 SessionState
+  state                 String
   tempCreditsThb        Int?
   activeOrderId         String?
   pendingVoucherOrderId String?
@@ -56,7 +27,7 @@ model Order {
   commissionRate       Decimal
   fxUsdtPerThb         Decimal
   usdtAmount           Decimal
-  status               OrderStatus
+  status               String
   nowPaymentsPaymentId String?
   payAddress           String?
   payAmount            Decimal?
@@ -72,8 +43,8 @@ model Order {
 model PaymentEvent {
   id         String              @id @default(cuid())
   orderId    String
-  source     PaymentEventSource
-  rawJson    Json
+  source     String
+  rawJson    String
   receivedAt DateTime            @default(now())
   order      Order               @relation(fields: [orderId], references: [id])
 

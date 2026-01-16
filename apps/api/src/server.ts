@@ -198,7 +198,7 @@ function verifySignature(payload: Record<string, unknown>, signature: string): b
 async function applyStatusUpdate(params: {
   order: {
     id: string;
-    status: OrderStatus;
+    status: string;
     lang: string;
     userTelegramId: string;
     payAmount: Decimal | null;
@@ -210,24 +210,27 @@ async function applyStatusUpdate(params: {
   rawJson: unknown;
 }) {
   const { order, newStatus, source, rawJson } = params;
+  const rawJsonString = typeof rawJson === "string" ? rawJson : JSON.stringify(rawJson);
 
   await prisma.paymentEvent.create({
     data: {
       orderId: order.id,
       source,
-      rawJson
+      rawJson: rawJsonString
     }
   });
 
-  if (!newStatus || TERMINAL_ORDER_STATUSES.includes(order.status)) {
+  const currentStatus = order.status as OrderStatus;
+
+  if (!newStatus || TERMINAL_ORDER_STATUSES.includes(currentStatus)) {
     return order;
   }
 
-  if (order.status === "FINISHED" && newStatus !== "FINISHED") {
+  if (currentStatus === "FINISHED" && newStatus !== "FINISHED") {
     return order;
   }
 
-  if (order.status === newStatus) {
+  if (currentStatus === newStatus) {
     return order;
   }
 
@@ -236,7 +239,7 @@ async function applyStatusUpdate(params: {
     data: { status: newStatus }
   });
 
-  await notifyStatusChange(order, newStatus);
+  await notifyStatusChange({ ...order, status: currentStatus }, newStatus);
 
   return updated;
 }

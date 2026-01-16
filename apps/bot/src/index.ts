@@ -29,7 +29,7 @@ import { config } from "./config.js";
 import { logger } from "./logger.js";
 import prisma from "./prisma.js";
 import { createPayment, refreshPayment } from "./apiClient.js";
-import type { Lang, SessionState } from "@p2p/shared";
+import type { Lang, OrderStatus, SessionState } from "@p2p/shared";
 
 const bot = new Telegraf(config.telegramBotToken);
 
@@ -208,7 +208,7 @@ bot.hears([BUTTONS.en.orders, BUTTONS.ru.orders], async (ctx) => {
       orderId: order.id,
       creditsThb: order.creditsThb,
       usdtAmount: Number(order.usdtAmount),
-      status: order.status,
+      status: order.status as OrderStatus,
       createdAt: order.createdAt
     })
   );
@@ -344,7 +344,8 @@ bot.action(/invoice:refresh:(.+)/, async (ctx) => {
   try {
     const result = await refreshPayment(orderId);
     await ctx.answerCbQuery();
-    await ctx.reply(paymentStatusUpdate(order.lang as Lang, result.status ?? order.status));
+    const status = (result.status ?? order.status) as OrderStatus;
+    await ctx.reply(paymentStatusUpdate(order.lang as Lang, status));
   } catch (error) {
     logger.error({ error }, "Failed to refresh status");
     await ctx.answerCbQuery(order.lang === "ru" ? "Ошибка обновления" : "Refresh failed");

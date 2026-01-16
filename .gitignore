@@ -6,5 +6,6 @@ packages/*/dist
 *.db
 *.sqlite
 *.sqlite3
+*.tsbuildinfo
 .DS_Store
 npm-debug.log*

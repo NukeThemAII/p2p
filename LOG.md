@@ -6,3 +6,6 @@
 - Built NOWPayments create/payment status + IPN verification flow.
 - Added Telegram bot UX with RU/EN copy, QR invoices, and admin actions.
 - Added docs, env example, and initial TODO list.
+- Switched Prisma enums to string fields for SQLite compatibility and loaded `.env` via dotenv.
+- Replaced JSON field storage with string payloads for SQLite compatibility.
+- Load `.env` from repo root when running workspace scripts.

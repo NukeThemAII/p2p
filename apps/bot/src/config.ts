@@ -1,4 +1,15 @@
+import dotenv from "dotenv";
+import path from "path";
 import { z } from "zod";
+
+const envPaths = [
+  path.resolve(process.cwd(), ".env"),
+  path.resolve(process.cwd(), "../../.env")
+];
+
+for (const envPath of envPaths) {
+  dotenv.config({ path: envPath });
+}
 
 const envSchema = z.object({
   TELEGRAM_BOT_TOKEN: z.string().min(1),
