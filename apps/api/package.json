@@ -1,0 +1,18 @@
+{
+  "name": "@p2p/api",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "main": "dist/index.js",
+  "scripts": {
+    "dev": "tsx src/index.ts",
+    "build": "tsc -p tsconfig.json"
+  },
+  "dependencies": {
+    "@p2p/shared": "file:../../packages/shared",
+    "@prisma/client": "^5.10.2",
+    "express": "^4.18.2",
+    "pino": "^8.18.0",
+    "zod": "^3.23.4"
+  }
+}
